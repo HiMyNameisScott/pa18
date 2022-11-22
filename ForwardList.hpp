@@ -216,7 +216,7 @@ typename ForwardList<T>::iterator ForwardList<T>::insert(ForwardList<T>::iterato
         previous->link = node;
    }
 
-        count ++
+        count ++;
    
    return iterator{ node };
 };

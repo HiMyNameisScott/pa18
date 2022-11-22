@@ -9,10 +9,11 @@ public:
     using value_type = T;
     using reference  = T&;
 
-    reference top(){ return ForwardList<T>::*begin(); };
+    reference top(){ return *ForwardList<T>::begin(); };
     bool empty(){ return ForwardList<T>::empty(); };
-    void push(const value_type& value) { ForwardList<T>::insert(begin(), value); };
-    void pop(){erase.begin()};
+    void push(const value_type& value) 
+        { ForwardList<T>::insert(ForwardList<T>::begin(), value); };
+    void pop(){ ForwardList<T>::erase(ForwardList<T>::begin()); };
 };
 
 int precedence(char ch);
@@ -32,7 +33,7 @@ int main() {
                 post_operators.push(ch);
             } else if (ch == ')'){          // This is a closing of an expression so we know that everything up to this point can
                                             // be pushed to the postfix expression.
-                while (post_operators.empty() != true){    // While the stack is not empty, we can push to expression
+                while (!post_operators.empty()){    // While the stack is not empty, we can push to expression
                     char ch = post_operators.top();        // ch = the top of the stack
                     postfix_exp.push_back(ch);             // push to expression
                     post_operators.pop();                // pop the top of the stack, repeat until empty
