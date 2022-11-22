@@ -2,6 +2,9 @@
 #include <vector>
 #include <iostream>
 
+///============================================================================
+/// Stack Template=============================================================
+///============================================================================
 
 template <class T>
 class Stack : protected ForwardList<T> {
@@ -17,79 +20,79 @@ public:
     void pop(){ ForwardList<T>::erase(ForwardList<T>::begin()); };
 };
 
+
+///============================================================================
+/// Fucntion Stubs for pa18====================================================
+///============================================================================
 int precedence(char ch);
-void obtain_data(std::vector<char> &text){
-    char ch;
-    
-    while(ch != '\n'){
-        text.push_back(ch);
-        std::cout << ch << std::endl;
-        std::cin.get(ch);
-        std::cin.ignore(1000, '\n');
-    }
-};
-void process_in(Stack<char> &post_operators, std::vector<char> &text);
+void obtain_data(std::string &infix);
+void process_infix(std::string& final, 
+                   Stack<char>& stack, 
+                   std::string& evaluate);
+
+///============================================================================
+/// MAIN=======================================================================
+///============================================================================
+
 int main() {
 
     char add_to_postfix;        //add to postfix expression                                                                                                                                                                                                                                                                                                                                                                                                                                         
     std::string postfix_exp;    //stores postfix expression
     Stack<char> post_operators; //stack to store operands
-    std::vector<char> text;     //vector to store initial input.
+    std::string infix;          //stores characters from input
     int count = 0;              //tracks the number of times to iterate loop
 
-    char number_of_its = std::cin.get();
-    std::cin.ignore(1000, '\n');
+    std::string number_of_its;
+    std::getline(std::cin, number_of_its);
+    std::cin.ignore();
 
-    
-    std::cout << "before loop" << std::endl;
+    while (count < stoi(number_of_its)){
+        obtain_data(infix);
+        process_infix(postfix_exp, post_operators, infix);
 
-    std::cout << number_of_its << std::endl;
-
-    while (count < (number_of_its - 48)){
-        obtain_data(text);
-        for (auto i : text){
-            std::cout << i << std::endl;
-        }
-        std::cout << postfix_exp << std::endl;
         count ++;
         }
-    std::cout << number_of_its << std::endl;
-    std::cout << "count " << count << std::endl;
+    std::cout << "infix" << infix << std::endl;
 return 0;
 }
 
+///============================================================================
+/// Function Definitions for pa18==============================================
+///============================================================================
 
 /// @brief 
 /// @param postfix_exp 
 /// @param post_operators 
 /// @param text 
-void process_in(std::string &postfix_exp, Stack<char> &post_operators, std::vector<char> &text){
-    for (char ch : text){               // evaluate each ch in text array
+void process_infix(std::string& final, 
+                Stack<char>& stack, 
+                std::string& evaluate){
+    for (char ch : evaluate){               // evaluate each ch in text array
         if (ch >= 48 && ch <= 56){      // if the char is between 0-9
-            postfix_exp.push_back(ch);  // add directly to expression
+            final.push_back(ch);  // add directly to expression
         } else if (ch == '(') {         // if open parans we can push this to operator stack
-            post_operators.push(ch);
+            stack.push(ch);
         } else if (ch == ')'){          //
-            while (!post_operators.empty()){    // While the stack is not empty, we can push to expression
-                char ch = post_operators.top();        // ch = the top of the stack
-                postfix_exp.push_back(ch);             // push to expression
-                post_operators.pop();                // pop the top of the stack, repeat until empty
+            while (!stack.empty()){    // While the stack is not empty, we can push to expression
+                char ch = stack.top();        // ch = the top of the stack
+                final.push_back(ch);             // push to expression
+                stack.pop();                // pop the top of the stack, repeat until empty
             }
         } else { 
-            while ( post_operators.empty() != true &&   // loop while stack is not empty
-                    precedence(ch) <= precedence(post_operators.top()) ){ // if the precedence of the operator is < ****
-                        char ch = post_operators.top(); // set char to push
-                        postfix_exp.push_back(ch);      // push the char to expression
-                        post_operators.pop();            // pop char from the stack
+            while ( stack.empty() != true &&   // loop while stack is not empty
+                    precedence(ch) <= precedence(stack.top()) ){ // if the precedence of the operator is < ****
+                        char ch = stack.top(); // set char to push
+                        final.push_back(ch);      // push the char to expression
+                        stack.pop();            // pop char from the stack
             }
         }
-        while (!post_operators.empty()){    // No other test cases, add rest
-            char ch = post_operators.top();
-            postfix_exp.push_back(ch);
-            post_operators.pop();
+        while (!stack.empty()){    // No other test cases, add rest
+            char ch = stack.top();
+            final.push_back(ch);
+            stack.pop();
     }
 
-        std::cout << postfix_exp;           // print out the expression
+        std::cout << final ;           // print out the expression
     }
 };
 
@@ -105,3 +108,17 @@ int precedence(char ch) {
         default: return 0; break;
      } 
 }
+
+
+/// @brief 
+/// @param infix 
+void obtain_data(std::string &infix){
+    
+    while(std::cin.peek() != 10){
+        std::string line;
+        getline(std::cin, line);
+        std::cin.ignore(-1, '\n');
+        char ch = line[0];
+        infix.push_back(ch);
+    }
+};
